@@ -3,7 +3,7 @@
 
 //= ==================GLOBAL VARIABLES====================
 // keep data about the game in a 2-D array
-const board = [
+let board = [
   ['', '', ''],
   ['', '', ''],
   ['', '', ''],
@@ -25,11 +25,30 @@ const secondSquare = null;
 const thirdSquare = null;
 
 //= ==================HELPER FUNCTIONS====================
+// ------empty board--------------
+const emptyBoard = () => {
+  board = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ];
+};
 
 // -------------Output messages----------------
 // build a function to add messages to the output box
 const output = (message) => {
   outputBox.innerText = message;
+};
+
+// -------display the winning message---------------
+const displayWinMessage = (winningPlayer) => {
+  const winCard = document.createElement('div');
+  winCard.classList.add('winCard');
+  winCard.innerText = `Congrats Player ${winningPlayer}, you win!`;
+  document.body.appendChild(winCard);
+  setTimeout(() => {
+    document.body.removeChild(winCard);
+  }, 5000);
 };
 
 // ----------------Build the board-------------------------
@@ -70,6 +89,7 @@ const buildBoard = (board) => {
     // add a single row to the board
     boardContainer.appendChild(rowElement);
   }
+  output(`Hello! Player ${currentPlayer}, it's your turn`);
 };
 // ----------checkWIn----------------------------
 const checkWin = (board) => {
@@ -115,6 +135,7 @@ const togglePlayer = () => {
   } else {
     currentPlayer = 'X';
   }
+  output(`Player ${currentPlayer}, it's your turn`);
 };
 
 // ----------square click---------------------------
@@ -128,6 +149,9 @@ const squareClick = (column, row) => {
     if (checkWin(board) === true) {
       console.log();
       output(`${currentPlayer}, you won!`);
+      displayWinMessage(currentPlayer);
+      emptyBoard();
+      buildBoard(board);
     } else {
       // change the player
       togglePlayer();
@@ -151,7 +175,6 @@ const gameInit = () => {
 const outputBox = document.createElement('div');
 outputBox.classList.add('outputbox');
 document.body.appendChild(outputBox);
-output('Hello!');
 
 //= ==================START GAME====================
 gameInit();
