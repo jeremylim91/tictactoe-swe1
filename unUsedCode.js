@@ -19,8 +19,13 @@ let boardContainer;
 // current player global starts at X
 let currentPlayer = 'X';
 
+// variables for checkWin
+const firstSquare = null;
+const secondSquare = null;
+const thirdSquare = null;
+
 //= ==================HELPER FUNCTIONS====================
-// -----------------empty the board--------------
+// ------empty board--------------
 const emptyBoard = () => {
   board = [
     ['', '', ''],
@@ -144,9 +149,7 @@ const squareClick = (column, row) => {
     if (checkWin(board) === true) {
       console.log();
       output(`${currentPlayer}, you won!`);
-      // show the winning message
       displayWinMessage(currentPlayer);
-      // reset the game
       emptyBoard();
       buildBoard(board);
     } else {
@@ -175,3 +178,26 @@ document.body.appendChild(outputBox);
 
 //= ==================START GAME====================
 gameInit();
+
+// // check for horizontal win2
+// for (let i = 0; i < board.length; i += 1) {
+//   for (let j = 0; j < board[i].length; j += 1) {
+//     if (firstSquare === null && secondSquare === null && thirdSquare === null) {
+//       firstSquare = currentPlayer;
+//       return;
+//     }
+//     if (firstSquare !== null && secondSquare === null && thirdSquare === null) {
+//       secondSquare = currentPlayer;
+//       return;
+//     } if (firstSquare !== null && secondSquare !== null) {
+//       thirdSquare = currentPlayer;
+//       return;
+//     }
+//     if ((firstSquare === secondSquare && secondSquare === thirdSquare) && (thirdSquare !== null)) {
+//       return true;
+//     }
+//     firstSquare = null;
+//     secondSquare = null;
+//     thirdSquare = null;
+//   }
+// }
