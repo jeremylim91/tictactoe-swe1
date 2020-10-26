@@ -2,12 +2,10 @@
 // keep data about the game in a 2-D array
 
 //= ==================GLOBAL VARIABLES====================
+// store user's decision on the board size
+let boardSize = '';
 // keep data about the game in a 2-D array
-let board = [
-  ['', '', ''],
-  ['', '', ''],
-  ['', '', ''],
-];
+let board = '';
 
 // the element that contains the rows and squares
 let boardElement;
@@ -20,19 +18,24 @@ let boardContainer;
 let currentPlayer = 'X';
 
 //= ==================HELPER FUNCTIONS====================
-// -----------------empty the board--------------
-const emptyBoard = () => {
-  board = [
-    ['', '', ''],
-    ['', '', ''],
-    ['', '', ''],
-  ];
+
+// ----------------make the board acc to user-specified size--------
+const makeBoard = (boardSize) => {
+  const board = [];
+  for (let i = 0; i < boardSize; i += 1) {
+    console.log('yay!');
+    board.push([]);
+    for (let j = 0; j < boardSize; j += 1) {
+      board[i].push('');
+    }
+  }
+  return board;
 };
 
 // -------------Output messages----------------
 // build a function to add messages to the output box
 const output = (message) => {
-  outputBox.innerText = message;
+  document.getElementById('outputBox').innerText = message;
 };
 
 // -------display the winning message---------------
@@ -43,7 +46,10 @@ const displayWinMessage = (winningPlayer) => {
   document.body.appendChild(winCard);
   setTimeout(() => {
     document.body.removeChild(winCard);
-  }, 5000);
+    // reset the game
+    document.body.innerHTML = '';
+    gameInit();
+  }, 3000);
 };
 
 // ----------------Build the board-------------------------
@@ -76,15 +82,13 @@ const buildBoard = (board) => {
 
       // set the click all over again
       // eslint-disable-next-line
-            square.addEventListener('click', () => {
+      square.addEventListener('click', () => {
         squareClick(i, j);
       });
     }
-
     // add a single row to the board
     boardContainer.appendChild(rowElement);
   }
-  output(`Hello! Player ${currentPlayer}, it's your turn`);
 };
 // ----------checkWIn----------------------------
 const checkWin = (board) => {
@@ -133,7 +137,7 @@ const togglePlayer = () => {
   output(`Player ${currentPlayer}, it's your turn`);
 };
 
-// ----------square click---------------------------
+// ----------SQUARE CLICK---------------------------
 const squareClick = (column, row) => {
   console.log('coordinates', column, row);
 
@@ -144,11 +148,8 @@ const squareClick = (column, row) => {
     if (checkWin(board) === true) {
       console.log();
       output(`${currentPlayer}, you won!`);
-      // show the winning message
+      // show the winning message + reset
       displayWinMessage(currentPlayer);
-      // reset the game
-      emptyBoard();
-      buildBoard(board);
     } else {
       // change the player
       togglePlayer();
@@ -158,20 +159,76 @@ const squareClick = (column, row) => {
     buildBoard(board);
   }
 };
+// ---------------CREATE THE INPUT CARD ELEMENT----------------
+const createInputCardElement = () => {
+  // create a card that will contain the instruction, input box, and submit button
+  const inputCard = document.createElement('div');
+  inputCard.setAttribute('id', 'inputCard');
+
+  // create a text field that can hold instructions to users
+  const instructionToUser = document.createElement('div');
+  instructionToUser.setAttribute('id', 'instructionToUser');
+
+  // create in input box that will let user provide written text
+  const userInputBox = document.createElement('input');
+  userInputBox.setAttribute('id', 'userInputBox');
+
+  // creeate a submit button
+  const userInputSubmitButton = document.createElement('button');
+  userInputSubmitButton.innerText = 'Submit';
+  userInputSubmitButton.setAttribute('id', 'userInputSubmitButton');
+
+  inputCard.appendChild(instructionToUser);
+  inputCard.appendChild(userInputBox);
+  inputCard.appendChild(userInputSubmitButton);
+  document.body.appendChild(inputCard);
+};
+// ----------VALIDATE USER'S INPUT ON THE BOARD SIZE-----
+const validateBoardSizeInput = () => {
+  boardSize = userInputBox.value;
+  // if the user's input is valid (i.e. >=3), do 4 things:
+  if (boardSize >= 3) {
+    // 1. remove the userInputCardElement
+    document.body.removeChild(document.getElementById('inputCard'));
+
+    // 2. build an output box
+    const outputBox = document.createElement('div');
+    outputBox.classList.add('outputbox');
+    outputBox.setAttribute('id', 'outputBox');
+    document.body.appendChild(outputBox);
+
+    // 3. build the board based on user's input
+    board = makeBoard(boardSize);
+
+    // 4. build the board element
+    // build the boardContainer's element
+    boardContainer = document.createElement('div');
+    boardContainer.innerHTML = '';
+    buildBoard(board);
+    // append the board container
+    document.body.appendChild(boardContainer);
+
+    // If user's input is invalid, return message until user gives valid input
+  } if (boardSize !== '' && boardSize < 3) {
+    instructionToUser.innerText = 'Please enter a valid number that is >=3';
+  }
+};
 
 //= ==================GAME INIT====================
 // create the board container element and put it on the screen
 const gameInit = () => {
-  boardContainer = document.createElement('div');
-  document.body.appendChild(boardContainer);
+  createInputCardElement();
 
-  // build the board - right now it's empty
-  buildBoard(board);
+  // welcome the user by displaying 'welcome' for 3 secs
+  document.getElementById('instructionToUser').innerText = 'Welcome!';
+  // after the welcome, instruct user to enter board size;
+  setTimeout(() => {
+    instructionToUser.innerText = 'This is a game of Tic Tac Toe. To begin, enter a board size (min size= 3)';
+  }, (2000));
+
+  // create an event listener that, when user clicks the submit button, whatever is in the input will be stored as a variable called 'board size'
+  userInputSubmitButton.addEventListener('click', validateBoardSizeInput);
 };
-// build an output box
-const outputBox = document.createElement('div');
-outputBox.classList.add('outputbox');
-document.body.appendChild(outputBox);
 
 //= ==================START GAME====================
 gameInit();

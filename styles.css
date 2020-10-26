@@ -33,3 +33,9 @@ border-width: 2px;
   text-align: center;
   padding-top: 100px;
 }
+
+.inputBoxContainer{
+  display:block;
+  height: 100px;
+  background-color:white;
+}
